@@ -1,0 +1,33 @@
+{
+	"name": "creativekallol/ckeditor-abbr",
+	"type": "typo3-cms-extension",
+	"description": "Adds Abbreviations information through the ckeditor.",
+	"license": [
+		"GPL-2.0-or-later"
+	],
+	"keywords": [
+		"ckeditor",
+		"typo3",
+		"plugin",
+		"editor",
+		"abbr",
+		"abbreviations"
+	],
+	"authors": [
+		{
+			"name": "Kallol Chakraborty",
+			"email": "kchakraborty@learntube.de",
+			"homepage": "https://www.lms3.de",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"typo3/cms-core": ">=12.4.0 <12.4.99",
+		"typo3/cms-rte-ckeditor": ">=12.4.0 <12.4.99"
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "ckeditor_abbr"
+		}
+	}
+}
