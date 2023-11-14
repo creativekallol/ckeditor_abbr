@@ -4,11 +4,16 @@
  */
 
 import { Plugin } from '@ckeditor/ckeditor5-core';
+import AbbreviationCommand from '@creativekallol/ckeditor-abbr/abbreviationcommand.js';
 
 export default class AbbreviationEditing extends Plugin {
 	init() {
 		this._defineSchema();
 		this._defineConverters();
+
+		this.editor.commands.add(
+			'addAbbreviation', new AbbreviationCommand( this.editor )
+		);
 	}
 	_defineSchema() {
 		const schema = this.editor.model.schema;
@@ -20,7 +25,7 @@ export default class AbbreviationEditing extends Plugin {
 	}
 	_defineConverters() {
 		const conversion = this.editor.conversion;
-		
+
         // Conversion from a model attribute to a view element
 		conversion.for( 'downcast' ).attributeToElement( {
 			model: 'abbreviation',

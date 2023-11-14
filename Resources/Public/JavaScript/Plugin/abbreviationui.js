@@ -6,6 +6,7 @@
 import { Plugin } from '@ckeditor/ckeditor5-core';
 import { ButtonView, ContextualBalloon, clickOutsideHandler } from '@ckeditor/ckeditor5-ui';
 import FormView from '@creativekallol/ckeditor-abbr/abbreviationview.js';
+import getRangeText from '@creativekallol/ckeditor-abbr/utils.js';
 
 export default class AbbreviationUI extends Plugin {
 	static get requires() {
@@ -42,12 +43,11 @@ export default class AbbreviationUI extends Plugin {
 		// Execute the command after clicking the "Save" button.
 		this.listenTo( formView, 'submit', () => {
 			// Grab values from the abbreviation and title input fields.
-			const title = formView.titleInputView.fieldView.element.value;
-			const abbr = formView.abbrInputView.fieldView.element.value;
-
-			editor.model.change( writer => {
-				editor.model.insertContent( writer.createText( abbr, { abbreviation: title } ) );
-			} );
+			const value = {
+				abbr: formView.abbrInputView.fieldView.element.value,
+				title: formView.titleInputView.fieldView.element.value
+			};
+			editor.execute( 'addAbbreviation', value );
 
             // Hide the form view after submit.
 			this._hideUI();
@@ -70,10 +70,32 @@ export default class AbbreviationUI extends Plugin {
 	}
 
 	_showUI() {
+		const selection = this.editor.model.document.selection;
+
+		// Check the value of the command.
+		const commandValue = this.editor.commands.get( 'addAbbreviation' ).value;
+
 		this._balloon.add( {
 			view: this.formView,
 			position: this._getBalloonPositionData()
 		} );
+
+		// Disable the input when the selection is not collapsed.
+		this.formView.abbrInputView.isEnabled = selection.getFirstRange().isCollapsed;
+
+		// Fill the form using the state (value) of the command.
+		if ( commandValue ) {
+			this.formView.abbrInputView.fieldView.value = commandValue.abbr;
+			this.formView.titleInputView.fieldView.value = commandValue.title;
+		}
+		// If the command has no value, put the currently selected text (not collapsed)
+		// in the first field and empty the second in that case.
+		else {
+			const selectedText = getRangeText( selection.getFirstRange() );
+
+			this.formView.abbrInputView.fieldView.value = selectedText;
+			this.formView.titleInputView.fieldView.value = '';
+		}
 
 		this.formView.focus();
 	}
